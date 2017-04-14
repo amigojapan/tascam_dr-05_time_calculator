@@ -1,0 +1,82 @@
+<html>
+    <body>
+        <script>
+            function WindowLoad(event) {
+                /*
+                I have a simple math question (warning I am terrible at math) I have a recorder,
+                I know it can make recordings of 1 hour 2 minutes and 6 seconds per file,
+                when a file ends it automatically starts the next file, if I know the start
+                time and the "mark time", what would be the formula to get which file and what 
+                time of that file the "mark time” is at in that file? this is not homework, it 
+                is a problem I am trying to solve for an actual recorder I have, but I can’t seem 
+                to get the right value… please give me a layman’s answer, not a mathematicians answer
+
+something seems to be wrong cause when I enter 00:00:00 as the start time and 16:00:00 as the mark time I
+get "in file:16 time in file:00:28:30” but just looking at the minutes, 28 minutes seems off cause 2 minutes 
+times 16 is 32 minutes, and it should even be 33 minutes I think because the seconds being 6 seconds times 16 would 
+be 90 seconds, which is over a minute, what am I doing wrong?
+
+monoprotic:amigojapan: 15 files takes 15*(01:02:06) = 15:31:30
+
+monoprotic:amigojapan: so 15 are complete; the end point is in the 16th file, 16:00:00 - 15:31:30 = 00:28:30 into it
+
+amigojapan: is the program output correct then?
+
+monoprotic:amigojapan: it seems to be, i think you're just confused about what the output is   
+
+                */
+
+                function time_to_seconds(hms) {
+                    //var hms = '02:04:33';   // your input string
+                    var a = hms.split(':'); // split it at the colons
+
+                    // minutes are worth 60 seconds. Hours are worth 60 minutes.
+                    var seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); 
+
+                    //console.log(seconds);
+                    return seconds;
+                }
+                function seconds_to_time(sec_num ) {
+                    var hours   = Math.floor(sec_num / 3600);
+                    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+                    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+                    if (hours   < 10) {hours   = "0"+hours;}
+                    if (minutes < 10) {minutes = "0"+minutes;}
+                    if (seconds < 10) {seconds = "0"+seconds;}
+                    return hours+':'+minutes+':'+seconds;
+                }
+
+                //calculate the time in seconds of each file start
+                var files_in_seconds=[];
+                var GB_SD=32;//32gigabytes 2 gygabytes per file
+                for(var file_index=0;file_index<(GB_SD/2)+1;file_index++) {
+                    files_in_seconds.push((file_index) * time_to_seconds("01:02:06"));//'01:02:06' time of one file
+                }
+                var start_time=time_to_seconds(prompt("start time HH:MM:SS","15:30:00"));
+                var mark_time=time_to_seconds(prompt("mark time HH:MM:SS","15:30:00"));
+                var time_from_start=mark_time-start_time;
+                //find which file it is in
+                for(var file_index in files_in_seconds) {
+                        if(time_from_start >= files_in_seconds[parseInt(file_index)] && time_from_start < files_in_seconds[parseInt(file_index)+1]) {
+                            time_in_file=time_from_start-files_in_seconds[parseInt(file_index)];
+                            alert(
+                                "start time:"+seconds_to_time(start_time)
+                                +
+                                "\nmark time:"+seconds_to_time(mark_time)
+                                +
+                                "\ntime from start:"+seconds_to_time(time_from_start)
+                                +
+                                "\nin file:"+(parseInt(file_index)+1)
+                                +
+                                "\ntime in file:"+seconds_to_time(time_in_file)
+                                );
+                        }
+                }
+            }
+
+            window.addEventListener('load', WindowLoad, false);
+        </script>
+        no output needed. hit relaod to calculate again (javascript must be enabled for this program to work)
+    </body>
+ </html>
